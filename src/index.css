@@ -1,0 +1,60 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-primary-500: #6366f1;
+  --color-primary-600: #4f46e5;
+  --color-secondary-500: #a855f7;
+  --color-secondary-600: #9333ea;
+}
+
+@layer base {
+  body {
+    @apply bg-gray-900 text-white overflow-x-hidden antialiased selection:bg-primary-500/30;
+  }
+}
+
+/* ── DSA Workspace Utilities ─────────────────────────────────────────────── */
+
+/* Hide browser native number spinner arrows (Chrome, Safari, Edge) */
+.no-spinner::-webkit-inner-spin-button,
+.no-spinner::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide browser native number spinner arrows (Firefox) */
+.no-spinner[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Hide scrollbars visually while keeping scroll functionality */
+.hidden-scrollbar {
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* IE / Edge */
+}
+.hidden-scrollbar::-webkit-scrollbar {
+  display: none;              /* Chrome / Safari */
+}
+
+/* Custom visible scrollbar for main workspace page scrolling */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(8, 11, 20, 0.6);
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(6, 182, 212, 0.35);
+  border-radius: 4px;
+  border: 1px solid rgba(6, 182, 212, 0.2);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(6, 182, 212, 0.7);
+}
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(6, 182, 212, 0.4) rgba(8, 11, 20, 0.6);
+}
