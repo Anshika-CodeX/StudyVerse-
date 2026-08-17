@@ -77,7 +77,7 @@ export const CenterPanel = ({ currentChatId, setCurrentChatId, fetchChats }: Cen
   const loadMessages = async (id: string) => {
     try {
       setLoadingMessages(true);
-      const res = await fetch(`/api/chat/${id}/messages`);
+      const res = await fetch(`https://study-verse-wni2.vercel.app/api/chat/${id}/messages`);
       if (res.ok) {
         const data: { id: string; role: string; content: string }[] = await res.json();
         setMessages(data.map(m => ({
@@ -125,7 +125,7 @@ export const CenterPanel = ({ currentChatId, setCurrentChatId, fetchChats }: Cen
     setIsStreaming(true);
 
     try {
-      const response = await fetch('/api/chat/stream', {
+      const response = await fetch('https://study-verse-wni2.vercel.app/api/chat/stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ chatId: currentChatId || 'new', message: trimmed }),
