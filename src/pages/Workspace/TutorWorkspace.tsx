@@ -12,7 +12,7 @@ export const TutorWorkspace = () => {
   const fetchChats = async () => {
     try {
       setLoadingHistory(true);
-     const res = await fetch('https://YOUR-BACKEND-URL/api/chat/history');
+    const res = await fetch('/api/chat/history');
       if (res.ok) {
         const data = await res.json();
         setChats(data);

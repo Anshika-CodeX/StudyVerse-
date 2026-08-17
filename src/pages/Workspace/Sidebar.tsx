@@ -35,7 +35,7 @@ export const Sidebar = ({ currentChatId, setCurrentChatId, chats, fetchChats, lo
     if (!editTitle.trim()) return;
 
     try {
-     const res = await fetch(`https://study-verse-wni2.vercel.app/api/chat/${id}`, {
+    const res = await fetch(`/api/chat/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ export const Sidebar = ({ currentChatId, setCurrentChatId, chats, fetchChats, lo
     if (!confirm('Are you sure you want to delete this session?')) return;
 
     try {
-      const res = await fetch(`https://study-verse-wni2.vercel.app/api/chat/${id}`, {
+      const res = await fetch(`/api/chat/${id}`, {
         method: 'DELETE',
       });
 
