@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, MessageSquare, Bookmark, Flame, Zap, Compass, Plus, Trash2, Edit, Check, X } from 'lucide-react';
+import { apiUrl } from '../../config/api';
 
 interface SidebarProps {
   currentChatId: string | null;
@@ -35,7 +36,7 @@ export const Sidebar = ({ currentChatId, setCurrentChatId, chats, fetchChats, lo
     if (!editTitle.trim()) return;
 
     try {
-    const res = await fetch(`/api/chat/${id}`, {
+      const res = await fetch(apiUrl(`/api/chat/${id}`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +59,7 @@ export const Sidebar = ({ currentChatId, setCurrentChatId, chats, fetchChats, lo
     if (!confirm('Are you sure you want to delete this session?')) return;
 
     try {
-      const res = await fetch(`/api/chat/${id}`, {
+      const res = await fetch(apiUrl(`/api/chat/${id}`), {
         method: 'DELETE',
       });
 

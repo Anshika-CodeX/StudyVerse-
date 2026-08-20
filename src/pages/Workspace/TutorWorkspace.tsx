@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { Sidebar } from './Sidebar';
 import { CenterPanel } from './CenterPanel';
+import { apiUrl } from '../../config/api';
 
 export const TutorWorkspace = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -12,7 +13,7 @@ export const TutorWorkspace = () => {
   const fetchChats = async () => {
     try {
       setLoadingHistory(true);
-    const res = await fetch('/api/chat/history');
+      const res = await fetch(apiUrl('/api/chat/history'));
       if (res.ok) {
         const data = await res.json();
         setChats(data);

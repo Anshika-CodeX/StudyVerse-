@@ -17,6 +17,13 @@ app.use(cors({
 
 app.use(express.json());
 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: 'StudyVerse Backend is Live'
+  });
+});
+
 // Health check
 app.get('/health', (req, res) => {
   res.status(200).json({

@@ -6,6 +6,7 @@ import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/atom-one-dark.css';
 import { DSAEngineOrchestrator } from '../../components/Visualizers/Common/DSAEngineOrchestrator';
 import type { DSAVisualizerData } from '../../components/Visualizers/types/visualizer.types';
+import { apiUrl, API_BASE_URL } from '../../config/api';
 
 // DB stores 'user' | 'assistant', UI uses 'user' | 'ai'
 type MessageRole = 'user' | 'ai';
@@ -77,7 +78,10 @@ export const CenterPanel = ({ currentChatId, setCurrentChatId, fetchChats }: Cen
   const loadMessages = async (id: string) => {
     try {
       setLoadingMessages(true);
-      const res = await fetch(`/api/chat/${id}/messages`);
+      const targetUrl = apiUrl(`/api/chat/${id}/messages`);
+      console.log('Fetching messages from:', targetUrl);
+      const res = await fetch(targetUrl);
+      console.log('Messages response status:', res.status);
       if (res.ok) {
         const data: { id: string; role: string; content: string }[] = await res.json();
         setMessages(data.map(m => ({
@@ -85,6 +89,9 @@ export const CenterPanel = ({ currentChatId, setCurrentChatId, fetchChats }: Cen
           role: normalizeRole(m.role),
           content: m.content,
         })));
+      } else {
+        const errText = await res.text();
+        console.error('Failed to fetch messages. Status:', res.status, 'Body:', errText);
       }
     } catch (error) {
       console.error('Failed to fetch messages', error);
@@ -125,14 +132,33 @@ export const CenterPanel = ({ currentChatId, setCurrentChatId, fetchChats }: Cen
     setIsStreaming(true);
 
     try {
-      const response = await fetch('/api/chat/stream', {
+      console.log('API URL:', API_BASE_URL);
+      const streamEndpoint = apiUrl('/api/chat/stream');
+      console.log('Calling chat stream endpoint:', streamEndpoint);
+
+      const response = await fetch(streamEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ chatId: currentChatId || 'new', message: trimmed }),
       });
 
+      console.log('Chat response status:', response.status);
+
       if (!response.ok || !response.body) {
-        throw new Error(`Server error: ${response.status}`);
+        let errorDetail = `Server returned status ${response.status}`;
+        try {
+          const errData = await response.json();
+          if (errData?.error) {
+            errorDetail = errData.error;
+          }
+        } catch {
+          try {
+            const errText = await response.text();
+            if (errText) errorDetail = errText;
+          } catch (_) {}
+        }
+        console.error('Chat error from server:', errorDetail);
+        throw new Error(errorDetail);
       }
 
       const reader = response.body.getReader();
@@ -184,6 +210,7 @@ export const CenterPanel = ({ currentChatId, setCurrentChatId, fetchChats }: Cen
 
             // Handle error from server
             if (parsed.error) {
+              console.error('Server SSE error payload:', parsed.error);
               setMessages(prev => prev.map(msg =>
                 msg.id === aiMsgId
                   ? { id: aiMsgId, role: 'ai', content: `⚠️ ${parsed.error}`, isTyping: false }
@@ -198,12 +225,15 @@ export const CenterPanel = ({ currentChatId, setCurrentChatId, fetchChats }: Cen
 
     } catch (error) {
       console.error('Streaming error:', error);
+      const errMsg = (error instanceof Error && error.message)
+        ? error.message
+        : 'Could not connect to the AI. Please check that the backend server is running.';
       setMessages(prev => prev.map(msg =>
         msg.id === aiMsgId
           ? {
             id: aiMsgId,
             role: 'ai',
-            content: '⚠️ Could not connect to the AI. Please check that the backend server is running.',
+            content: `⚠️ ${errMsg}`,
             isTyping: false
           }
           : msg
